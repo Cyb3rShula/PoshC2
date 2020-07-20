@@ -32,9 +32,9 @@ OPTIND=1         # Reset in case getopts has been used previously in the shell.
 # Initialize our own variables:
 GIT_BRANCH="master"
 POSH_DIR="/opt/PoshC2"
-SCRIPT_DIR=`dirname "$0"`
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-if [ -f "$SCRIPT_DIR/poshc2/server/C2Server.py"]; then
+if [ -f "$SCRIPT_DIR/poshc2/server/C2Server.py" ]; then
     POSH_DIR="$SCRIPT_DIR"
 fi
 
@@ -46,7 +46,7 @@ show_help(){
     echo "Defaults are master branch to /opt/PoshC2"
 }
 
-while getopts "h?bp:" opt; do
+while getopts ":h:?:b:p:" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -59,7 +59,7 @@ while getopts "h?bp:" opt; do
     esac
 done
 
-echo "[+] Installing PoshC2"
+echo "[+] Installing PoshC2 in \"$POSH_DIR\" for branch \"$GIT_BRANCH\""
 echo ""
 
 # Update apt
@@ -80,7 +80,11 @@ if [[ ! -d "$POSH_DIR" ]]; then
     apt-get install -y git
     git clone -b "$GIT_BRANCH" https://github.com/nettitude/PoshC2 "$POSH_DIR"
 else
-    echo "[*] PoshC2 directory already exists, skipping clone."
+    echo "[*] PoshC2 directory already exists, updating..."
+    pushd "$POSH_DIR"
+    git fetch
+    git stash
+    git reset --hard origin/"$GIT_BRANCH"
 fi
 
 # Install requirements for PoshC2
