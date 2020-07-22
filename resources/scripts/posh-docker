@@ -13,8 +13,9 @@ show_help(){
 }
 
 DOCKER_TAG="master"
+USER=""
 
-while getopts "h?t:" opt; do
+while getopts "h?t:u:" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -22,7 +23,13 @@ while getopts "h?t:" opt; do
         ;;
     t)  DOCKER_TAG="$OPTARG"
         ;;
+    u) USER="$OPTARG"
+        ;;
     esac
 done
 
-sudo -E docker run -ti --rm -v "$POSH_PROJECTS_DIR:$DOCKER_POSH_PROJECTS_DIR" m0rv4i/poshc2:"$DOCKER_TAG" /usr/bin/posh "$@"
+if [ ! -z "$USER" ]; then
+    sudo -E docker run -ti --rm -v "$POSH_PROJECTS_DIR:$DOCKER_POSH_PROJECTS_DIR" m0rv4i/poshc2:"$DOCKER_TAG" /usr/bin/posh -u "$USER"
+else
+    sudo -E docker run -ti --rm -v "$POSH_PROJECTS_DIR:$DOCKER_POSH_PROJECTS_DIR" m0rv4i/poshc2:"$DOCKER_TAG" /usr/bin/posh
+fi
