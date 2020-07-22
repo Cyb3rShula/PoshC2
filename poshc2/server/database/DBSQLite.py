@@ -79,7 +79,7 @@ def initializedb():
     create_opsec_entry = """CREATE TABLE OpSec_Entry (
         OpsecID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
         Date TEXT,
-        Host TEXT,
+        Owner TEXT,
         Event TEXT,
         Note TEXT);"""
 
