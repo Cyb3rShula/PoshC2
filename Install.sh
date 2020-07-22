@@ -193,4 +193,5 @@ echo "# posh <-- This will run the ImplantHandler, used to issue commands to the
 echo ""
 echo "Other options:"
 echo "posh-service <-- This will run the C2 server as a service instead of in the foreground"
+echo "posh-stop-service <-- This will stop the service"
 echo "posh-log <-- This will view the C2 log if the server is already running"

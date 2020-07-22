@@ -1,0 +1,5 @@
+#!/bin/bash
+
+CONTAINER=`sudo docker ps -f label=posh-server ancestor=m0rv4i/poshc2`
+
+sudo docker stop "$CONTAINER"

@@ -53,8 +53,19 @@ elif [ "$1" == "-l" ]; then
     echo "[*] Listing PoshC2 Projects in $POSH_PROJECTS_DIR"
     command ls -dl /var/poshc2/*/ 2>/dev/null | cut -d '/' -f 4
 
+elif [ "$1" == "-d" ]; then
+
+    read -p "Are you sure you want to delete the project $2? " -n 1 -r
+    echo    # (optional) move to a new line
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        rm -rf "$POSH_PROJECTS_DIR/$2"
+        echo "[+] Project removed"
+    else
+        echo "[*] Removal aborted"
+    fi
 else
     echo "[*] Usage: posh-project -n <new-project-name>"
     echo "[*] Usage: posh-project -s <project-to-switch-to>"
     echo "[*] Usage: posh-project -l (lists projects)"
+    echo "[*] Usage: posh-project -d <project-to-delete>"
 fi

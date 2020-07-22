@@ -27,5 +27,5 @@ while getopts "h?t:" opt; do
     esac
 done
 
-sudo -E docker run --rm -p "$POSHC2_PORT:$POSHC2_PORT" -v "$POSH_PROJECTS_DIR:$DOCKER_POSH_PROJECTS_DIR" m0rv4i/poshc2:"$DOCKER_TAG" /usr/bin/posh-server
+sudo -E docker run --rm -l posh-server -p "$POSHC2_PORT:$POSHC2_PORT" -v "$POSH_PROJECTS_DIR:$DOCKER_POSH_PROJECTS_DIR" m0rv4i/poshc2:"$DOCKER_TAG" /usr/bin/posh-server
 

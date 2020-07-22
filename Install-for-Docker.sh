@@ -75,6 +75,7 @@ rm -f /usr/bin/posh-service
 rm -f /usr/bin/posh-stop-service
 rm -f /usr/bin/posh-project
 rm -f /usr/bin/posh-docker-clean
+rm -f /usr/bin/posh-stop-server
 curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/scripts/_posh-common -o /usr/bin/_posh-common >/dev/null
 curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/scripts/fpc -o /usr/bin/fpc >/dev/null
 curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/scripts/posh-docker -o /usr/bin/posh >/dev/null
@@ -85,6 +86,7 @@ curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/sc
 curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/scripts/posh-stop-service -o /usr/bin/posh-stop-service >/dev/null
 curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/scripts/posh-project -o /usr/bin/posh-project >/dev/null
 curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/scripts/posh-docker-clean -o /usr/bin/posh-docker-clean >/dev/null
+curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/scripts/posh-docker-stop-server -o /usr/bin/posh-stop-server >/dev/null
 chmod +x /usr/bin/fpc
 chmod +x /usr/bin/posh
 chmod +x /usr/bin/posh-server
@@ -94,6 +96,7 @@ chmod +x /usr/bin/posh-service
 chmod +x /usr/bin/posh-stop-service
 chmod +x /usr/bin/posh-project
 chmod +x /usr/bin/posh-docker-clean
+chmod +x /usr/bin/posh-stop-server
 
 mkdir -p "/var/poshc2"
 curl https://raw.githubusercontent.com/nettitude/PoshC2/$GIT_BRANCH/resources/config-template.yml -o "/var/poshc2/config-template.yml" >/dev/null
@@ -119,8 +122,10 @@ echo "# posh-config"
 echo ""
 echo "Then run:"
 echo "# posh-server <-- This will run the C2 server, which communicates with Implants and receives task output"
+echo "# posh-stop-server <-- This will stop the server container"
 echo "# posh <-- This will run the ImplantHandler, used to issue commands to the server and implants"
 echo ""
 echo "Other options:"
 echo "posh-service <-- This will run the C2 server as a service instead of in the foreground"
+echo "posh-stop-service <-- This will stop the service"
 echo "posh-log <-- This will view the C2 log if the server is already running"
