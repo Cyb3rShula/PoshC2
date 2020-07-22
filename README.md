@@ -46,12 +46,12 @@ Defaults are master branch to /opt/PoshC2
 Elevated privileges are required as the install script performs `apt` updates and installations.
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/master/Install.sh | bash
+curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/master/Install.sh | sudo bash
 ```
 You can manually set the PoshC2 installation directory by passing it to the Install.sh script as the `-p` argument. The default is **/opt/PoshC2**:
 
 ```
-curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/master/Install.sh | bash -s -- -p /root/PoshC2
+curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/master/Install.sh | sudo bash -s -- -p /root/PoshC2
 ```
 
 ### Cutting Edge Features
@@ -66,7 +66,7 @@ This does trade stablity for new features however so do it at your own discretio
 To use `dev` or a feature branch pass the branch name to the Install.sh script as the `-b` argument:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/dev/Install.sh | bash -s -- -b dev
+curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/dev/Install.sh | sudo bash -s -- -b dev
 ```
 
 Note the URL includes the branch name also (here `dev` instead of `master`).
@@ -75,7 +75,9 @@ Note the URL includes the branch name also (here `dev` instead of `master`).
 
 You can also run PoshC2 using Docker, this allows more stable and running and enables PoshC2 to easily run on other operating systems.
 
-To start with, install Docker on the host and then add the PoshC2 projects directory to Docker as a shared directory if required for your OS. By default this is **/var/.poshc2** on *nix.
+The Docker install does not clone PoshC2 as the PoshC2 images on Docker Hub are used, so only a minimal install of some dependencies and scripts are performed.
+
+To start with, install Docker on the host and then add the PoshC2 projects directory to Docker as a shared directory if required for your OS. By default this is **/var/poshc2** on *nix.
 
 ### Kali based hosts
 
@@ -92,13 +94,13 @@ Default is the master branch
 Elevated privileges are required as the install script performs `apt` updates and installations.
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/master/Install-for-Docker.sh | bash
+curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/master/Install-for-Docker.sh | sudo bash
 ```
 
 To use the `dev` or feature branches with Docker curl down the `Install-for-Docker.sh` on the appropriate branch and pass the branch name as an argument:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/BRANCHNAME/Install-for-Docker.sh | bash -s -- -b BRANCHNAME
+curl -sSL https://raw.githubusercontent.com/nettitude/PoshC2/BRANCHNAME/Install-for-Docker.sh | sudo bash -s -- -b BRANCHNAME
 ```
 
 ### Other OSs
@@ -112,6 +114,14 @@ Create a new project:
 
 ```bash
 posh-project -n <project-name>
+```
+
+Projects can be switched to or listed using this script:
+
+```bash
+[*] Usage: posh-project -n <new-project-name>
+[*] Usage: posh-project -s <project-to-switch-to>
+[*] Usage: posh-project -l (lists projects)
 ```
 
 Edit the configuration for your project:
