@@ -32,5 +32,6 @@ get_posh_project_dir(){
     fi
 }
 
-
-
+get_docker_image_name(){
+    DOCKER_IMAGE_NAME="m0rv4i/poshc2"
+}

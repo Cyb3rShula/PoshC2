@@ -1,4 +1,5 @@
 
+PoshC2DockerImage="m0rv4i/poshc2"
 
 Function Build-PoshC2DockerImage {
     <#
@@ -41,9 +42,9 @@ Function Build-PoshC2DockerImage {
     }
 
     If($NoCache) {
-        docker build -t m0rv4i/poshc2 $PoshC2Dir --no-cache
+        docker build -t $PoshC2DockerImage $PoshC2Dir --no-cache
     } Else {
-        docker build -t m0rv4i/poshc2 $PoshC2Dir
+        docker build -t $PoshC2DockerImage $PoshC2Dir
     }
 }
 
@@ -134,7 +135,7 @@ Function Start-PoshC2Server {
 
     )
 
-    docker run --rm -p $("$PoshC2Port:$PoshC2Port") -v $("$LocalPoshC2ProjectDir:/var/poshc2") m0rv4i/poshc2 /usr/bin/posh-server
+    docker run --rm -p $("$PoshC2Port:$PoshC2Port") -v $("$LocalPoshC2ProjectDir:/var/poshc2") $PoshC2DockerImage /usr/bin/posh-server
 }
 
 Function Start-PoshC2DockerHandler {
@@ -177,7 +178,7 @@ Function Start-PoshC2DockerHandler {
         [string]$User = ""
     )
 
-    docker run -ti --rm -v $("$LocalPoshC2ProjectDir:/var/poshc2") m0rv4i/poshc2 /usr/bin/posh -u "$User"
+    docker run -ti --rm -v $("$LocalPoshC2ProjectDir:/var/poshc2") $PoshC2DockerImage /usr/bin/posh -u "$User"
 }
 
 Export-ModuleMember -Function Build-PoshC2DockerImage -Alias posh-docker-build
