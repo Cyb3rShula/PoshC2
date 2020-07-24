@@ -26,7 +26,7 @@ from poshc2.server.database.DB import get_newimplanturl, get_implantbyid, get_im
 from poshc2.server.database.DB import get_c2urls, del_autorun, del_autoruns, add_autorun, get_autorun, get_newtasks_all
 from poshc2.server.database.DB import drop_newtasks, get_implanttype, get_randomuri, get_creds, get_creds_for_user, insert_cred, generate_csv
 from poshc2.server.database.DB import get_hosted_files, insert_hosted_file, del_hosted_file, enable_hosted_file, select_item, del_newtasks
-from poshc2.server.database.DB import insert_opsec_event, del_opsec_event, get_opsec_events
+from poshc2.server.database.DB import insert_opsec_event, del_opsec_event, get_opsec_events, get_powerstatusbyrandomuri
 
 
 def catch_exit(signum, frame):
@@ -78,15 +78,46 @@ def implant_handler_command_loop(user, printhelp="", autohide=None):
                     LastSeen = implant.LastSeen
                     Hostname = implant.Hostname
                     Domain = implant.Domain
+                    URLID = implant.URLID
                     DomainUser = implant.User
                     Arch = implant.Arch
                     PID = implant.PID
                     Pivot = implant.Pivot
                     Sleep = implant.Sleep.strip()
                     Label = implant.Label
+
+                    apmsuspendshut = False
+
+                    pwrStatus = get_powerstatusbyrandomuri(implant.RandomURI)
+                    if pwrStatus is not None:
+                        if Label is not None:
+                            Label += " "
+                        else:
+                            Label = ""
+                        apmstatus = pwrStatus[2].lower()
+
+                        if (apmstatus == "shutdown"):
+                            Label += "SHTDWN "
+                            apmsuspendshut = True
+                        elif (apmstatus == "suspend" or apmstatus == "querysuspend"):
+                            Label += "SUSPND "
+                            apmsuspendshut = True
+
+                        if not apmsuspendshut:
+                            if (pwrStatus[7]):
+                                Label += "LOCKED "
+                            if (not pwrStatus[8]):
+                                Label += "SCRN OFF "
+
+                            if (not pwrStatus[3]):
+                                if (pwrStatus[6] is not None and pwrStatus[6].isdigit()):
+                                    Label += ("DSCHRG: %s%% " % pwrStatus[6])
+                                else:
+                                    Label += ("DSCHRG ")
+
                     Pivot = get_implant_type_prompt_prefix(ID)
                     LastSeenTime = datetime.strptime(LastSeen, "%d/%m/%Y %H:%M:%S")
-                    URLID = implant.URLID
+                    LastSeenTimeString = datetime.strftime(LastSeenTime, "%Y-%m-%d %H:%M:%S")
                     now = datetime.now()
                     if(Sleep.endswith('s')):
                         sleep_int = int(Sleep[:-1])
@@ -110,15 +141,15 @@ def implant_handler_command_loop(user, printhelp="", autohide=None):
                         sLabel = Colours.BLUE + "[" + Label + "]" + Colours.GREEN
 
                     if "C#;PB" in Pivot:
-                        print(Colours.BLUE + "%s: Seen:%s | PID:%s | %s | PBind | %s\\%s @ %s (%s) %s %s" % (sID.ljust(4), LastSeen, PID.ljust(5), Sleep, Domain, DomainUser, Hostname, Arch, Pivot, sLabel))
+                        print(Colours.BLUE + "%s: Seen:%s | PID:%s | %s | PBind | %s\\%s @ %s (%s) %s %s" % (sID.ljust(4), LastSeenTimeString, PID.ljust(5), Sleep, Domain, DomainUser, Hostname, Arch, Pivot, sLabel))
                     elif nowMinus30Beacons > LastSeenTime and autohide:
                         pass
                     elif nowMinus10Beacons > LastSeenTime:
-                        print(Colours.RED + "%s: Seen:%s | PID:%s | %s | URLID: %s | %s\\%s @ %s (%s) %s %s" % (sID.ljust(4), LastSeen, PID.ljust(5), Sleep, URLID, Domain, DomainUser, Hostname, Arch, Pivot, sLabel))
+                        print(Colours.RED + "%s: Seen:%s | PID:%s | %s | URLID: %s | %s\\%s @ %s (%s) %s %s" % (sID.ljust(4), LastSeenTimeString, PID.ljust(5), Sleep, URLID, Domain, DomainUser, Hostname, Arch, Pivot, sLabel))
                     elif nowMinus3Beacons > LastSeenTime:
-                        print(Colours.YELLOW + "%s: Seen:%s | PID:%s | %s | URLID: %s | %s\\%s @ %s (%s) %s %s" % (sID.ljust(4), LastSeen, PID.ljust(5), Sleep, URLID, Domain, DomainUser, Hostname, Arch, Pivot, sLabel))
+                        print(Colours.YELLOW + "%s: Seen:%s | PID:%s | %s | URLID: %s | %s\\%s @ %s (%s) %s %s" % (sID.ljust(4), LastSeenTimeString, PID.ljust(5), Sleep, URLID, Domain, DomainUser, Hostname, Arch, Pivot, sLabel))
                     else:
-                        print(Colours.GREEN + "%s: Seen:%s | PID:%s | %s | URLID: %s | %s\\%s @ %s (%s) %s %s" % (sID.ljust(4), LastSeen, PID.ljust(5), Sleep, URLID, Domain, DomainUser, Hostname, Arch, Pivot, sLabel))
+                        print(Colours.GREEN + "%s: Seen:%s | PID:%s | %s | URLID: %s | %s\\%s @ %s (%s) %s %s" % (sID.ljust(4), LastSeenTimeString, PID.ljust(5), Sleep, URLID, Domain, DomainUser, Hostname, Arch, Pivot, sLabel))
             else:
                 now = datetime.now()
                 print(Colours.RED + "No Implants as of: %s" % now.strftime("%d/%m/%Y %H:%M:%S"))
@@ -333,9 +364,9 @@ def implant_command_loop(implant_id, user):
                     clear()
                     return
                 prompt_commands = COMMANDS
-                if implant.Pivot == 'Python':
+                if implant.Pivot.startswith('Python'):
                     prompt_commands = UXCOMMANDS
-                if implant.Pivot == 'C#':
+                if implant.Pivot.startswith('C#'):
                     prompt_commands = SHARPCOMMANDS
                 if 'PB' in implant.Pivot:
                     style = Style.from_dict({
@@ -748,21 +779,25 @@ def do_creds(user, command):
     if "-add " in command:
         p = re.compile(r"-domain=([^\s]*)")
         domain = re.search(p, command)
-        if domain: domain = domain.group(1)
+        if domain:
+            domain = domain.group(1)
         p = re.compile(r"-username=([^\s]*)")
         username = re.search(p, command)
-        if username: username = username.group(1)
-        p = re.compile(r"-password='([^']*)'")
+        if username:
+            username = username.group(1)
+        p = re.compile(r"-password=([^\s]*)")
         password = re.search(p, command)
         if password:
             password = password.group(1)
         else:
             p = re.compile(r"-password=([^\s]*)")
             password = re.search(p, command)
-            if password: password = password.group(1)
+            if password:
+                password = password.group(1)
         p = re.compile(r"-hash=([^\s]*)")
         hash = re.search(p, command)
-        if hash: hash = hash.group(1)
+        if hash:
+            hash = hash.group(1)
         if not domain or not username:
             print_bad("Please specify a domain and username")
             return
@@ -804,7 +839,7 @@ def do_tasks(user, command):
     else:
         for task in tasks:
             imname = get_implantdetails(task.RandomURI)
-            alltasks += "[%s] : %s | %s\r\n" % (imname.ImplantID, "%s\\%s" % (imname.Domain, imname.User), task[2])
+            alltasks += f"[{imname.ImplantID}] : {imname.Domain}\\{imname.User} | {task.Command} : {task.TaskID}\r\n"
         print_good("Queued tasks:\r\n\r\n%s" % alltasks)
     input("Press Enter to continue...")
     clear()
@@ -852,22 +887,19 @@ def do_createdaisypayload(user, command):
     daisyurl, daisyurl_count = string_to_array(daisyurl)
     daisyhostheader = ""
 
-    try:
-        c = 0
-        daisyurls = daisyurl.split(",")
-        for url in daisyurls:
-            if c > 0:
-                daisyhostheader += ",\"\""
-            else:
-                daisyhostheader += "\"\""
-            c += 1
-    except:
-        daisyhostheader = "\"\""
+    c = 0
+    daisyurls = daisyurl.split(",")
+    for url in daisyurls:
+        if c > 0:
+            daisyhostheader += ",\"\""
+        else:
+            daisyhostheader += "\"\""
+        c += 1
 
     C2 = get_c2server_all()
     urlId = new_urldetails(name, C2.PayloadCommsHost, C2.DomainFrontHeader, "", "", "", "")
     newPayload = Payloads(C2.KillDate, C2.EncKey, C2.Insecure, C2.UserAgent, C2.Referrer,
-        "%s?d" % get_newimplanturl(), PayloadsDirectory, PowerShellProxyCommand=proxynone, URLID=urlId, PBindPipeName=pbindpipename, PBindSecret=pbindsecret)
+                          "%s?d" % get_newimplanturl(), PayloadsDirectory, PowerShellProxyCommand=proxynone, URLID=urlId, PBindPipeName=pbindpipename, PBindSecret=pbindsecret)
     newPayload.PSDropper = (newPayload.PSDropper).replace("$pid;%s" % (daisyurl), "$pid;%s@%s" % (daisyhost.User, daisyhost.Domain))
     newPayload.CreateDroppers("%s_" % name)
     newPayload.CreateShellcode("%s_" % name)
@@ -882,7 +914,7 @@ def do_createdaisypayload(user, command):
     clear()
 
 
-def do_createnewpayload(user, command, creds=None, shellcodeOnly = False):
+def do_createnewpayload(user, command, creds=None, shellcodeOnly=False):
     params = re.compile("createnewpayload ", re.IGNORECASE)
     params = params.sub("", command)
     creds = None
@@ -896,7 +928,7 @@ def do_createnewpayload(user, command, creds=None, shellcodeOnly = False):
             clear()
             return
     name = input(Colours.GREEN + "Proxy Payload Name: e.g. Scenario_One ")
-    comms_url  = input("Domain or URL in array format: https://www.example.com,https://www.example2.com ")
+    comms_url = input("Domain or URL in array format: https://www.example.com,https://www.example2.com ")
     domainfront = input("Domain front URL in array format: fjdsklfjdskl.cloudfront.net,jobs.azureedge.net ")
     proxyurl = input("Proxy URL: .e.g. http://10.150.10.1:8080 ")
     pbindsecret = input(f"PBind Secret: e.g {PBindSecret} ")
@@ -911,7 +943,6 @@ def do_createnewpayload(user, command, creds=None, shellcodeOnly = False):
         input("Press Enter to continue...")
         clear()
 
-    randomid = randomuri(5)
     proxyuser = ""
     proxypass = ""
     credsexpire = ""
@@ -929,7 +960,7 @@ def do_createnewpayload(user, command, creds=None, shellcodeOnly = False):
     C2 = get_c2server_all()
 
     urlId = new_urldetails(name, comms_url, domainfront, proxyurl, proxyuser, proxypass, credsexpire)
-    newPayload = Payloads(C2.KillDate, C2.EncKey, C2.Insecure, C2.UserAgent, C2.Referrer, imurl, PayloadsDirectory, URLID = urlId, PBindPipeName=pbindpipename, PBindSecret=pbindsecret)
+    newPayload = Payloads(C2.KillDate, C2.EncKey, C2.Insecure, C2.UserAgent, C2.Referrer, imurl, PayloadsDirectory, URLID=urlId, PBindPipeName=pbindpipename, PBindSecret=pbindsecret)
 
     newPayload.CreateDroppers("%s_" % name)
     newPayload.CreateShellcode("%s_" % name)
@@ -958,7 +989,7 @@ def do_history(user, command):
     with open('%s/.implant-history' % PoshProjectDirectory) as hisfile:
         for line in hisfile:
             if line.startswith("+"):
-                print(Colours.GREEN + line.replace("+", "").replace("\n",""))
+                print(Colours.GREEN + line.replace("+", "").replace("\n", ""))
     input("Press Enter to continue...")
     clear()
 

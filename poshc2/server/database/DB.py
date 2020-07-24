@@ -70,7 +70,7 @@ def create_database(create_urls, create_implants, create_autoruns, create_tasks,
             c.execute(create_power_status)
             conn.commit()
         except Exception as e:
-            print("Error creating database: " + e)
+            print("Error creating database: " + str(e))
 
 
 def convert_query(query):
