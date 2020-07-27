@@ -179,8 +179,8 @@ def implant_handler_command_loop(user, printhelp="", autohide=None):
             if command.startswith("add-hosted-file"):
                 do_add_hosted_file(user, command)
                 continue
-            if command.startswith("del-hosted-file"):
-                do_del_hosted_file(user, command)
+            if command.startswith("disable-hosted-file"):
+                do_disable_hosted_file(user, command)
                 continue
             if command.startswith("enable-hosted-file"):
                 do_enable_hosted_file(user, command)
@@ -561,18 +561,18 @@ def do_insert_opsec_events(user, command):
 
 
 def do_show_hosted_files(user, command):
-    files = get_hosted_files()
+    hosted_files = get_hosted_files()
     filesformatted = "ID  URI  FilePath  ContentType  Base64  Active\n"
-    for i in files:
-        filesformatted += "%s  %s  %s  %s  %s %s \n" % (i[0], i[1], i[2], i[3], i[4], i[5])
+    for hosted_file in hosted_files:
+        filesformatted += f"{hosted_file.ID}  {hosted_file.URI}  {hosted_file.FilePath}  {hosted_file.ContentType}  {hosted_file.Base64}  {hosted_file.Active} \n"
     print_good(filesformatted)
     input("Press Enter to continue...")
     clear()
 
 
 def do_add_hosted_file(user, command):
-    URI = input("URI Path: .e.g. /downloads/2020/application.docx: ")
     FilePath = input("File Path: .e.g. /tmp/application.docx: ")
+    URI = input("URI Path: .e.g. /downloads/2020/application: ")
     ContentType = input("Content Type: .e.g. (text/html): ")
     if ContentType == "":
         ContentType = "text/html"
@@ -583,28 +583,29 @@ def do_add_hosted_file(user, command):
         Base64 = "Yes"
     insert_hosted_file(URI, FilePath, ContentType, Base64, "Yes")
     FirstURL = get_first_url(select_item("PayloadCommsHost", "C2Server"), select_item("DomainFrontHeader", "C2Server"))
-    print_good("add-hosted-file \n\n%s%s -> %s (%s)\r\n" % (FirstURL, URI, FilePath, ContentType))
+    print_good("Added hosted-file \n\n%s%s -> %s (%s)\r\n" % (FirstURL, URI, FilePath, ContentType))
     do_show_hosted_files(user, command)
     clear()
 
 
-def do_del_hosted_file(user, command):
-    hosted_file_id = command.lower().replace("del-hosted-file", "").strip()
+def do_disable_hosted_file(user, command):
+    hosted_file_id = command.lower().replace("disable-hosted-file ", "")
+    hosted_file_id = command.lower().replace("disable-hosted-file", "").strip()
     if hosted_file_id == "":
         hosted_file_id = input("Enter hosted-file ID: ")
     del_hosted_file(hosted_file_id)
-    print_good("de-activated hosted-file\r\n")
+    print_good("Disabled hosted-file\r\n")
     input("Press Enter to continue...")
     clear()
 
 
 def do_enable_hosted_file(user, command):
     hosted_file_id = command.lower().replace("enable-hosted-file ", "")
-    hosted_file_id = command.lower().replace("enable-hosted-file", "")
+    hosted_file_id = command.lower().replace("enable-hosted-file", "").strip()
     if hosted_file_id == "":
         hosted_file_id = input("Enter hosted-file ID: ")
     enable_hosted_file(hosted_file_id)
-    print_good("activated hosted-file\r\n")
+    print_good("Enabled hosted-file\r\n")
     input("Press Enter to continue...")
     clear()
 

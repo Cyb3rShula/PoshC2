@@ -59,7 +59,7 @@ IMGS19459394%s49395491SGMI""" % (self.RandomURI, self.AllBeaconURLs, self.KillDa
             urlInfo = "PBind"
         else:
             urlInfo = get_url_by_id(self.URLID[0])
-            if urlInfo is None:
+            if urlInfo is not None:
                 urlInfo = f"URL: {urlInfo[1]}"
             else:
                 urlInfo = "URL: Unknown"

@@ -39,7 +39,7 @@ def initializedb():
 def db_exists():
     if get_conn() is None:
         database_connect()
-    DBImplementation.db_exists(conn)
+    return DBImplementation.db_exists(conn)
 
 
 def generate_csv(tableName):
