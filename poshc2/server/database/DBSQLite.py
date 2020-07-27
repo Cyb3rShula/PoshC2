@@ -130,7 +130,15 @@ def initialise(create_database):
 
 
 def db_exists(conn):
-    return os.path.isfile(Database)
+    if not os.path.isfile(Database):
+        return False
+    c = conn.cursor()
+    c.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='PowerStatus';")
+    result = c.fetchone()
+    if result:
+        return True
+    else:
+        return False
 
 
 def generate_csv(conn, tableName):
