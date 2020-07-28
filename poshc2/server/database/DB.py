@@ -335,7 +335,7 @@ def update_item(column, table, value, wherecolumn=None, where=None):
     c = get_conn().cursor()
     if wherecolumn is None:
         query = convert_query(f"UPDATE {table} SET {column}=?")
-        c.execute(query, (value))
+        c.execute(query, (value,))
     else:
         query = f"UPDATE {table} SET {column}=? WHERE {wherecolumn}=?"
         c.execute(query, (value, where))

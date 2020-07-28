@@ -400,7 +400,7 @@ def existingdb(db):
         os.rename("%spayloads" % PoshProjectDirectory, "%spayloads_old" % PoshProjectDirectory)
         os.makedirs("%spayloads" % PoshProjectDirectory)
         C2 = get_c2server_all()
-        urlId = new_urldetails("updated_host", PayloadCommsHost, C2.DomainFrontHeader, "", "", "", "")
+        urlId = new_urldetails(f"updated_host-{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d-%H:%M:%S')}", PayloadCommsHost, C2.DomainFrontHeader, "", "", "", "")
         newPayload = Payloads(C2.KillDate, C2.EncKey, C2.Insecure, C2.UserAgent, C2.Referrer, get_newimplanturl(), PayloadsDirectory, URLID=urlId)
         update_item("PayloadCommsHost", "C2Server", PayloadCommsHost)
         update_item("QuickCommand", "C2Server", QuickCommand)
