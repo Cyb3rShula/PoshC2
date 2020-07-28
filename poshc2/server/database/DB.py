@@ -337,7 +337,7 @@ def update_item(column, table, value, wherecolumn=None, where=None):
         query = convert_query(f"UPDATE {table} SET {column}=?")
         c.execute(query, (value,))
     else:
-        query = f"UPDATE {table} SET {column}=? WHERE {wherecolumn}=?"
+        query = convert_query(f"UPDATE {table} SET {column}=? WHERE {wherecolumn}=?")
         c.execute(query, (value, where))
     get_conn().commit()
 
